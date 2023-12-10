@@ -1,0 +1,228 @@
+Name: Ryan Stutz
+Student ID: 101137893
+
+------------------------Compiling the program------------------------
+
+Prerequisite - you have node installed
+
+- Open terminal and navigate to the file where the program is being stored
+- type "npm init -y" and hit enter
+- type "npm install pg" and hit enter
+- node ".\index.js" to run program 
+
+
+------------------------Setting Up The Database------------------------
+
+Prerequisite - pgAdmin 4 is already installed
+
+- Open pgAdmin 4
+- Click on "Servers" in the Object Explorer section on the left
+- Enter a password if you have one
+- Right click on "Databases" and click Create -> Databases
+- Name the database "FitnessAppDB" and click save
+- In the FitnessAppDB drop down, find "Schemas", right click it, and choose "Query Tool"
+- In the Query section, copy and paste the following SQL code separately:
+
+CREATE TABLE member (
+	m_id			SERIAL,
+	f_name			VARCHAR(255) NOT NULL,
+	l_name			VARCHAR(255) NOT NULL,
+	email			VARCHAR(255) NOT NULL UNIQUE,
+	password		VARCHAR(20) NOT NULL,
+	height			INT,
+	weight			INT,
+	gender			TEXT,
+	acc_balance		MONEY DEFAULT 100,
+	PRIMARY KEY(m_id)
+)
+
+
+CREATE TABLE mem_goals (
+	m_id		INT UNIQUE,
+	t_weight	INT,
+	t_cardio	INT,
+	t_bench		INT,
+	t_squat		INT,
+	t_dl		INT,
+	FOREIGN KEY(m_id)
+		REFERENCES Member(m_id)
+)
+
+CREATE TABLE achievements(
+	m_id		INT UNIQUE,
+	pr_weight	INT,
+	pr_cardio	INT,
+	pr_bench	INT,
+	pr_dl		INT,
+	pr_squat	INT,
+	FOREIGN KEY(m_id)
+		REFERENCES Member(m_id)
+)
+
+CREATE TABLE exercises(
+	e_id		SERIAL,
+	e_area		VARCHAR(20) NOT NULL,
+	e_name		VARCHAR(50) UNIQUE,
+	PRIMARY KEY(e_id)
+)
+
+CREATE TABLE e_pointer(
+	e_id	SERIAL,
+	e_area	VARCHAR(20) NOT NULL,
+	PRIMARY KEY(e_id)
+)
+
+CREATE TABLE mem_activity(
+	a_id			SERIAL,
+	m_id			INT NOT NULL,
+	e_id			INT NOT NULL,
+	e_name			VARCHAR(50),
+	dist			INT,
+	sets			INT,
+	reps			INT,
+	weight_added	INT,
+	e_date			DATE NOT NULL,
+	PRIMARY KEY(a_id),
+	FOREIGN KEY(m_id)
+		REFERENCES Member(m_id),
+	FOREIGN KEY(e_id)
+		REFERENCES exercises(e_id),
+	FOREIGN KEY(e_name)
+		REFERENCES Exercises(e_name)
+)
+
+CREATE TABLE staff (
+	s_id		SERIAL,
+	f_name		VARCHAR(255) NOT NULL,
+	l_name		VARCHAR(255) NOT NULL,
+	email		VARCHAR(255) NOT NULL UNIQUE,
+	password	VARCHAR(20) NOT NULL,
+	type		VARCHAR(7)	NOT NULL,
+	PRIMARY KEY(s_id)
+)
+
+CREATE TABLE classes(
+	c_id			SERIAL,
+	class_name		VARCHAR(50) NOT NULL UNIQUE,
+	room_number		INT,
+	date			DATE,
+	s_id			INT,
+	PRIMARY KEY(c_id),
+	FOREIGN KEY(s_id)
+		REFERENCES staff(s_id)
+)
+
+CREATE TABLE registered (
+	c_id		INT,
+	m_id		INT,
+	FOREIGN KEY(m_id)
+		REFERENCES Member(m_id),
+	FOREIGN KEY(c_id)
+		REFERENCES classes(c_id)
+)
+
+CREATE TABLE training(
+	t_id		SERIAL,
+	m_id		INT NOT NULL,
+	s_id		INT NOT NULL,
+	t_date		DATE NOT NULL,
+	comments	TEXT,
+	PRIMARY KEY(t_id),
+	FOREIGN KEY(m_id)
+		REFERENCES member(m_id),
+	FOREIGN KEY(s_id)
+		REFERENCES staff(s_id)
+)
+
+
+
+// Test Members
+INSERT INTO Member(f_name, l_name, email, password, acc_balance)
+VALUES('Test', 'McTesterson', 't', 't', 1000000)
+
+INSERT INTO Member(f_name, l_name, email, password)
+VALUES
+	('Valery', 'Smith', 'vsmith@hotmail.com', 'iloveturtles'),
+	('Amanda', 'Ronci', 'youknowwhodisis@gmail.com', 'dksnvf!$D'),
+	('Jeremy', 'Irons', 'thevoiceofscar@ishouldhavebeenking.com', 'ihatemufasa'),
+	('Luci', 'Fer', 'satan@evil.hell', 'fallinisballin')
+
+INSERT INTO exercises(e_area, e_name)
+VALUES
+	('Cardio', 'Treadmill'),
+	('Cardio', 'Stationary Bike'),
+	('Cardio', 'Elliptical Trainer'),
+	('Cardio', 'Rowing Machine'),
+	('Cardio', 'Jump Rope'),
+	('Chest', 'Bench Press'),
+	('Chest', 'Dumbbell Flyes'),
+	('Chest', 'Push-Ups'),
+	('Chest', 'Chest Press Machine'),
+	('Chest', 'Pec-Deck Machine'),
+	('Back', 'Lateral Pulldowns'),
+	('Back', 'Dumbbell Rows'),
+	('Back', 'Seated Cable Lat Pull Downs'),
+	('Back', 'Seated Cable Rows'),
+	('Back', 'Lower Back Hyper Extensions'),
+	('Legs', 'Barbell Squat'),
+	('Legs', 'Hamstring Curls'),
+	('Legs', 'DeadLifts'),
+	('Legs', 'Leg Extensions'),
+	('Legs', 'Calf Raises'),
+	('Shoulders', 'Barbell Overhead Shoulder Press'),
+	('Shoulders', 'Dumbbell Lateral Raises'),
+	('Shoulders', 'Upright Rows'),
+	('Shoulders', 'Reverse Pec-Deck'),
+	('Shoulders', 'Shrugs'),
+	('Biceps', 'Barbell Bicep Curls'),
+	('Biceps', 'Hammer Curls'),
+	('Biceps', 'Preacher Curls'),
+	('Biceps', 'Cable Bicep Curls'),
+	('Biceps', '21s'),
+	('Triceps', 'Tricep Cable Pushdowns'),
+	('Triceps', 'Skull Crushers'),
+	('Triceps', 'Tricep Kickbacks'),
+	('Triceps', 'Rope Pushdowns'),
+	('Triceps', 'Bench Dips'),
+	('Core', 'Planks'),
+	('Core', 'Russian Twist'),
+	('Core', 'Leg Raises'),
+	('Core', 'Cruches'),
+	('Core', 'Oblique V-Ups');
+
+INSERT INTO e_pointer(e_area)
+VALUES
+	('Cardio'),
+	('Chest'),
+	('Back'),
+	('Legs'),
+	('Shoulders'),
+	('Biceps'),
+	('Triceps'),
+	('Core')
+
+INSERT INTO classes(class_name)
+VALUES
+	('Cardio Kickboxing'),
+	('Yoga'),
+	('Hot Yoga'),
+	('Pilates'),
+	('Zumba'),
+	('CrossFit'),
+	('HIIT'),
+	('Senior Fitness'),
+	('Meditation and Mindfulness'),
+	('Core Conditioning')
+	
+
+INSERT INTO Staff (f_name, l_name, email, password, type)
+VALUES ('Ryan', 'Stutz', 'rstutz@fitfusion.com', 'password', 'Admin');
+
+INSERT INTO Staff (f_name, l_name, email, password, type)
+VALUES
+	('Blayne', 'Johnson', 'bjohnson@fitfusion.com', 'whatever', 'Trainer'),
+	('Danny', 'Tremblay', 'dtremblay@fitfusion.com', 'password', 'Trainer'),
+	('Shiela', 'Rampart', 'srampart@fitfusion.com', 'apex5ever', 'Trainer'),
+	('Tammy', 'Tisdale', 'ttisdale@fitfusion.com', 'tmoney', 'Trainer'),
+	('Homeless', 'Bob', 'hrobert@fitfusion.com', 'jonesing4meth', 'Trainer')
+	
