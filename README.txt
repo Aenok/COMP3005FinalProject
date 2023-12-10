@@ -1,6 +1,8 @@
 Name: Ryan Stutz
 Student ID: 101137893
 
+Video URL: https://youtu.be/8D67Xn3a6gs
+
 ------------------------Compiling the program------------------------
 
 Prerequisite - you have node installed

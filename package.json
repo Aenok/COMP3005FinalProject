@@ -1,7 +1,7 @@
 {
   "name": "comp3005fp2",
   "version": "1.0.0",
-  "description": "",
+  "description": "Name: Ryan Stutz\r Student ID: 101137893",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
